@@ -609,6 +609,12 @@ impl Run {
             env::reset_env_cache_key();
         }
 
+        // Git task includes and remote dependency tasks read this setting when
+        // tasks are loaded, so set it before the first task lookup.
+        if self.no_cache {
+            Settings::override_with(|s| s.task.remote_no_cache = Some(true));
+        }
+
         // Check if --help or -h is in the task args BEFORE toolset/deps
         // NOTE: Only check self.args, not self.args_last, because args_last contains
         // arguments after explicit -- which should always be passed through to the task
